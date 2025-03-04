@@ -13,15 +13,15 @@ print("OPENAI_API_KEY:", openai.api_key)
 company_name = "네이버"
 # 정의한 링크들. 링크는 앞뒤에 +++을 붙여서 react에서 링크로 만들 예정.
 LINKS = {
-    "로그인": "+++https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/+++", # 로그인
-    "회원가입": "+++https://nid.naver.com/user2/join/agree?lang=ko_KR&realname=+++", # 회원가입 
-    "비밀번호찾기": "+++https://nid.naver.com/user2/help/pwInquiry?lang=ko_KR+++", #비밀번호 찾기
-    "회사소개": "+++https://www.navercorp.com/naver/naverMain+++", # 회사 소개 페이지
+    "로그인": "https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/", # 로그인
+    "회원가입": "https://nid.naver.com/user2/join/agree?lang=ko_KR&realname=", # 회원가입 
+    "비밀번호찾기": "https://nid.naver.com/user2/help/pwInquiry?lang=ko_KR", #비밀번호 찾기
+    "회사소개": "https://www.navercorp.com/naver/naverMain", # 회사 소개 페이지
     "company_name": "네이버", # 회사 이름
     "company_address": "경기 성남시 분당구 정자일로 95",
         # 회사에 대한 설명
     "company_intro": "네이버는 전자상거래, 클라우드, 인공지능(AI), 모바일 애플리케이션 등 혁신적인 기술을 기반으로 다양한 사업을 확장하고 있습니다. 특히, 네이버 웹툰, 네이버 파이낸셜, 네이버 클라우드와 같은 서비스는 국내외에서 높은 평가를 받고 있습니다.고객 중심의 혁신을 추구하며, 사용자들의 생활을 보다 편리하고 풍요롭게 만드는 디지털 플랫폼을 제공하는 네이버는 앞으로도 지속적으로 성장하며, 글로벌 시장에서도 강력한 입지를 다질 것입니다.",
-    "quote_request": "+++https://help.naver.com/inquiry/home.help+++" # 견적 문의
+    "quote_request": "https://help.naver.com/inquiry/home.help" # 견적 문의
 }
 
 # 요청 데이터 모델
@@ -38,15 +38,15 @@ class ChatResponse(BaseModel):
 async def chat_endpoint(request: ChatRequest):
     try:
         system_prompt = (
-            f"당신은 {company_name}의 고객 지원 로봇입니다. 사용자가 질문을 하면 적절한 답변을 제공해야 합니다.\n"
-            "만약 사용자가 로그인, 회원가입, 비밀번호 재설정, 회사 정보, 견적 요청 등에 대해 질문하면, "
-            "적절한 답변을 제공해야 합니다.\n"
-            "예를 들어 로그인에 대한 질문이 들어오면,+++https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/+++로 이동하라고 답변해야 합니다.\n"
-            "링크는 주소 앞뒤에 +++을 붙여서 대답합니다.\ n"
-            "만약 사용자가 이 외의 질문을 한다면  \n"
-            
-            
-        )
+        f"당신은 {LINKS['company_name']}의 고객 지원 로봇입니다. 사용자가 질문을 하면 적절한 답변을 제공해야 합니다.\n"
+        "아래는 회사 관련 정보 및 링크입니다:\n"
+        f"{LINKS}\n"
+        "답변 시에는 반드시 위의 LINKS에 정의된 정보를 우선적으로 참고하여 답변해야 합니다.\n"
+        f"만약 링크에 대한 정보를 제공해야 하면, 링크 앞뒤로 +++를 붙여야 합니다.\n"
+         "답변 시에는 반드시 위 링크 정보를 그대로 사용하세요. 어떤 추가 표기나 레이블([회사소개] 등)을 붙이지 말고, URL이 +++ 형태 그대로 출력되어야 합니다."
+        
+        
+    )
         messages = [
             {
                 "role": "system",

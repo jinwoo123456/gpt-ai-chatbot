@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./chat.css";
 import ChatbotIco from "@/assets/images/Chatbot2.png";
-import CustomerIco from "@/assets/images/Customer3.png"; 
+import CustomerIco from "@/assets/images/Customer4.png"; 
 
-// 백엔드에서 보내는 텍스트 내의 "+++" 패턴을 찾아 a 태그로 대체하는 함수
+// 백엔드에서 보낸 링크 +++링크+++ 형식을 a 태그로 변환
 function parseLinkText(text) {
   const regex = /\+\+\+([^+]+)\+\+\+/g;
   return text.replace(regex, (match, p1) => {
@@ -14,7 +14,9 @@ function parseLinkText(text) {
 }
 
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    { text: "안녕하세요 무엇을 도와드릴까요? <br/>예: 회사소개,견적문의,로그인,회원가입,<br/>비밀번호 찾기 ", isUser: false, id: "initial", links: null }
+  ]);
   const [userMessage, setUserMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +28,7 @@ const Chat = () => {
     const userMsgObj = { text: userMessage, isUser: true };
     setMessages((prevMessages) => [...prevMessages, userMsgObj]);
 
-    // AI 응답 메시지 초기 상태 (로딩 표시)
+    // 응답 대기중에는 타이핑중...표시
     const aiMessageObj = {
       text: "타이핑 중...",
       isUser: false,
@@ -99,10 +101,9 @@ const MessageList = ({ messages }) => {
 };
 
 const Message = ({ text, isUser, links }) => {
-  // AI 메시지의 경우, parseLinkText로 후처리
   const formattedText = !isUser ? parseLinkText(text) : text;
 
-  // 링크 딕셔너리가 있을 경우 첫 번째 링크만 추출
+  // 1가지의 링크만 출력
   let singleLink = null;
   if (!isUser && links) {
     const entries = Object.entries(links);
